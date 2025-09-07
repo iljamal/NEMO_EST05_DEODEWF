@@ -21,6 +21,7 @@ run_nemo_ecmwf_workflow.py
 │   ├── link_restart() / coldstart
 │   ├── link_meteo(), link_runoff(), link_boundary()  
 │   └── launch_model() → sbatch run_nemo
+
 TODO
 ├──  DEODE meteo prep
 ├──  Launch model 
