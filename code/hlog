@@ -1,0 +1,63 @@
+nohup: ignoring input
+INFO - 2025-09-06T15:00:17Z - Selected dataset version: "202411"
+INFO - 2025-09-06T15:00:17Z - Selected dataset part: "default"
+cdo(1) remapbil: Bilinear weights from lonlat (403x300) to lonlat (529x455) grid, with source mask (47617)
+Submitted batch job 35488565
+Adjusted workflow: Processing date 20241018 (original input was 20241019)
+
+===== STEP 1: initialize (coldstart) =====
+
+===== STEP 1.1: Assimilation Increment (CMEMS SLA) =====
+Using FORCINGDIR=/ec/res4/hpcperm/eeim/deode_sswf/forcing
+Fetching SLA for 2024-10-18T00:00:00 → 2024-10-18T01:00:00
+[DEBUG] Saved sla_raw.nc with shape: (2, 300, 403)
+Running: cdo -O -L -f nc4 -z zip2 -setmisstonn -remapbil,/ec/res4/hpcperm/eeim/deode_sswf/forcing/bathy_meter.nc sla_raw.nc sla_remap.nc
+Saved assimilation SLA field to: /ec/res4/hpcperm/eeim/deode_sswf/forcing/assim/sla_state_cmems_20241018.nc
+[OK] Assimilation increment written to: /ec/res4/hpcperm/eeim/deode_sswf/forcing/assim/assim_background_increments.d20241018.nc
+[OK] Direct initialization background state written to: /ec/res4/hpcperm/eeim/deode_sswf/forcing/assim/assim_background_state_DI.d20241018.nc
+
+===== STEP 2: Physical boundary (Copernicus Marine) =====
+
+===== STEP 3: ECMWF meteo forcing =====
+
+===== STEP 4: Runoff forcing =====
+
+===== STEP 5: Run NEMO model =====
+
+=====  DO NOT Adjusting Boundary with SLA Assimilation  if it is a hotstart =====
+
+===== Linking Assimilation Increment (SLA) =====
+Copying assimilation increment: /ec/res4/hpcperm/eeim/deode_sswf/forcing//assim/assim_background_increments.d20241018.nc → /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018/assim_background_increments.nc
+
+===== Linking Meteo Forcing =====
+Looking for meteo forcing files in: /ec/res4/hpcperm/eeim/deode_sswf/forcing/meteo/meteo_nemo_ecmwf_BAL/2024/10/18/00/
+Linking /ec/res4/hpcperm/eeim/deode_sswf/forcing/meteo/meteo_nemo_ecmwf_BAL/2024/10/18/00/FORCE_ecmwf_y2024m10d19.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//forcing_ecmwf/FORCE_ecmwf_y2024m10d19.nc
+Linking /ec/res4/hpcperm/eeim/deode_sswf/forcing/meteo/meteo_nemo_ecmwf_BAL/2024/10/18/00/FORCE_ecmwf_y2024m10d20.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//forcing_ecmwf/FORCE_ecmwf_y2024m10d20.nc
+Linking /ec/res4/hpcperm/eeim/deode_sswf/forcing/meteo/meteo_nemo_ecmwf_BAL/2024/10/18/00/FORCE_ecmwf_y2024m10d18.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//forcing_ecmwf/FORCE_ecmwf_y2024m10d18.nc
+Linking /ec/res4/hpcperm/eeim/deode_sswf/forcing/meteo/meteo_nemo_ecmwf_BAL/2024/10/18/00/FORCE_ecmwf_y2024m10d21.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//forcing_ecmwf/FORCE_ecmwf_y2024m10d21.nc
+
+===== Linking Runoff Forcing =====
+Linking static river_data_s_c0.1.nc: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/river_data_s_c0.1.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//runoff_seas/river_data_s.nc
+Linking runoff discharge: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/runoff_q_seasonal/river_data_y2015m10d18.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//runoff_seas/river_data_y2024m10d18.nc
+WARNING: Runoff discharge file missing: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/runoff_q_seasonal/river_data_y2015m10d18.nc
+Linking runoff temperature: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/runoff_t_atmt2/river_data_t_y2024m10d18.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//runoff_seas/river_data_t_y2024m10d18.nc
+Linking runoff discharge: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/runoff_q_seasonal/river_data_y2015m10d19.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//runoff_seas/river_data_y2024m10d19.nc
+WARNING: Runoff discharge file missing: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/runoff_q_seasonal/river_data_y2015m10d19.nc
+Linking runoff temperature: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/runoff_t_atmt2/river_data_t_y2024m10d18.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//runoff_seas/river_data_t_y2024m10d19.nc
+Linking runoff discharge: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/runoff_q_seasonal/river_data_y2015m10d20.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//runoff_seas/river_data_y2024m10d20.nc
+WARNING: Runoff discharge file missing: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/runoff_q_seasonal/river_data_y2015m10d20.nc
+Linking runoff temperature: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/runoff_t_atmt2/river_data_t_y2024m10d18.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//runoff_seas/river_data_t_y2024m10d20.nc
+Linking runoff discharge: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/runoff_q_seasonal/river_data_y2015m10d21.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//runoff_seas/river_data_y2024m10d21.nc
+WARNING: Runoff discharge file missing: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/runoff_q_seasonal/river_data_y2015m10d21.nc
+Linking runoff temperature: /ec/res4/hpcperm/eeim/deode_sswf/forcing/runoff/runoff_t_atmt2/river_data_t_y2024m10d18.nc -> /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018//runoff_seas/river_data_t_y2024m10d21.nc
+
+===== Linking Boundary Forcing =====
+Boundary directory: /ec/res4/hpcperm/eeim/deode_sswf/forcing/boundary/cmems_nrt_bc_V110/2024/10/18/00/
+
+===== Launching NEMO Model =====
+Removing old file: /ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018/model_last_start
+Model start time written to model_last_start: 1757170823
+Submitting NEMO job with command: sbatch -W --export=ALL,model_run_dir=/ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018/ --output=/ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018/nemo_run_stdout.log --error=/ec/res4/scratch/eeim/nemo_deode21/NEMO5_EST_0.5nm_op_20241018/nemo_run_stderr.log run_nemo
+NEMO job finished successfully.
+
+===== ALL DONE SUCCESSFULLY =====
