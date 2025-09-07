@@ -1,85 +1,27 @@
-┌────────────────────────────────────────────────────────────┐
-│ Main script entrypoint:                                   │
-│     python run_nemo_ecmwf_workflow.py --date YYYYMMDD     │
-└────────────────────────────────────────────────────────────┘
-              │
-              ▼
-     Parse --date and shift -1 day for spin-up
-              │
-              ▼
-  Set ENV vars FORCINGDIR + CONFDIR + HPCPERM fallback
-              │
-              ▼
-     ┌────────────────────────────────────────┐
-     │ if date_str == "20231230" (coldstart): │
-     └────────────────────────────────────────┘
-              │
-              ├──▶ `initialize_case(case_id=0)`
-              │       └─ calls `init_case0_coldstart(...)`
-              │             └─ uses CMEMS data to build
-              │                initial 3D fields (thetao, so)
-              │
-              └──▶ SLA assimilation increment:
-                      • `generate_sla_increment(...)`
-                      • `create_assim_background_files(...)`
-
-     ┌─────────────────────────────────────────────┐
-     │ else: (operational / restart-based)         │
-     └─────────────────────────────────────────────┘
-              └──▶ `generate_operational_ssh_increment(...)`
-
-              ▼
-    ┌────────────────────────────────────────────┐
-    │ STEP 2: Physical boundary forcing          │
-    └────────────────────────────────────────────┘
-              └──▶ `run_physical_boundary(date_str, ndays)`
-                      ├─ Downloads CMEMS hourly data
-                      ├─ Remaps to boundary grid
-                      └─ Splits into daily 2D/3D files
-
-              ▼
-    ┌────────────────────────────────────────────┐
-    │ STEP 3: ECMWF Meteo forcing                │
-    └────────────────────────────────────────────┘
-              └──▶ `generate_meteo_ecmwf(date_str, ndays)`
-                      ├─ Fetch via MARS API
-                      ├─ Process t2, u10, v10, swr, lwr, etc
-                      └─ Outputs: FORCE_ecmwf_yYYYYmMMdDD.nc
-
-              ▼
-    ┌────────────────────────────────────────────┐
-    │ STEP 4: Runoff forcing                     │
-    └────────────────────────────────────────────┘
-              └──▶ `generate_runoff(date_str, ndays)`
-                      ├─ Looks back up to 4 days of meteo t2
-                      ├─ Computes rotemp = max(t2 - 274.15, 0.1)
-                      └─ Remaps to bathymetry grid
-
-              ▼
-    ┌────────────────────────────────────────────┐
-    │ STEP 5: Run NEMO model                     │
-    └────────────────────────────────────────────┘
-              └──▶ `NemoModelRunner(...)`
-                      ├─ `prepare_workdir()`
-                      ├─ `configure_run()`
-                      ├─ `generate_namelists()`
-                      ├─ `link_restart()` or coldstart
-                      ├─ `link_meteo()`
-                      ├─ `link_runoff()`
-                      ├─ `link_boundary()`
-                      └─ `launch_model()`
-                              └─ uses sbatch run_nemo
-
-              ▼
-    ┌────────────────────────────────────────────┐
-    │ Optionally: SLA adjustment on boundaries   │
-    └────────────────────────────────────────────┘
-              └──▶ `cpandadjust_boundary()`
-                      ├─ loads bdy_hourly_2d_*.nc
-                      ├─ sets SLA[0] = 0.0
-                      └─ links 3D boundary files
-
-              ▼
-    ┌────────────────────────────────────────────┐
-    │ Post-run (optional): rsync, archive        │
-    └────────────────────────────────────────────┘
+run_nemo_ecmwf_workflow.py
+├── Parse args (--date, --ndays)
+├── Adjust date: date - 1 day
+├── Set ENV: FORCINGDIR, CONFDIR
+├── Coldstart branch (if date == 20231230)
+│   ├── initialize_case(case_id=0)
+│   │   └── init_case0_coldstart → download & remap CMEMS θ, S
+│   └── generate_sla_increment + create_assim_background_files
+├── Else (Operational)
+│   └── generate_operational_ssh_increment
+├── STEP 2: run_physical_boundary(date, ndays)
+│   └── remap CMEMS hourly fields → boundary strips
+├── STEP 3: generate_meteo_ecmwf(date, ndays)
+│   └── fetch MARS, compute t2, u10, v10, lwr, swr, etc.
+├── STEP 4: generate_runoff(date, ndays)
+│   └── look back 4 days of FORCE → compute rotemp = max(t2 - 274.15, 0.1)
+├── STEP 5: NemoModelRunner(...)
+│   ├── prepare_workdir()
+│   ├── configure_run()
+│   ├── generate_namelists()
+│   ├── link_restart() / coldstart
+│   ├── link_meteo(), link_runoff(), link_boundary()  
+│   └── launch_model() → sbatch run_nemo
+TODO
+├──  DEODE meteo prep
+├──  Launch model 
+├──  convert output
